@@ -1,4 +1,7 @@
-ROOM := name=STRING _ ',' _ cap=INT
-STRING := val='[a-zA-Z0-9]+'
+ROOM := '#' _ 'room' ENDLINE room={ _ '-' _ name=STRING rhs={',' _ cap=INT}? ENDLINE }*
+STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
+        .value = string { return this.val; }
 INT := val='[0-9]+'
+        .value = number { return parseInt(this.val); }
 _ := '\s'*
+ENDLINE := _ ';|\n'*
