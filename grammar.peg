@@ -1,0 +1,4 @@
+ROOM := name=STRING _ ',' _ cap=INT
+STRING := val='[a-zA-Z0-9]+'
+INT := val='[0-9]+'
+_ := '\s'*
