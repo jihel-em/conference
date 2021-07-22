@@ -1,7 +1,17 @@
-ROOM := '#' _ 'room' ENDLINE room={ _ '-' _ name=STRING rhs={',' _ cap=INT}? ENDLINE }*
+PROGRAM := STATEMENT*
+STATEMENT := ROOMS | PAPERS
+
+ROOMS := '#' _ 'rooms' ENDLINE ROOM*
+ROOM := _ '-' _ name=STRING _ rhs={',' _ cap=INT}? ENDLINE
+
+PAPERS := '#' _ 'papers' _ ENDLINE PAPER*
+PAPER := '##' _ paperName=STRING ENDLINE PERSON*
+PERSON := _ '-' _ name=STRING _ snd={',' _ about=STRING _}? trd={',' _ homepage=LINK _}? fth={',' _ email=LINK _}? ENDLINE
+
+LINK := '[a-zA-Z0-9.\/?!=\-\+:@]+'
 STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
         .value = string { return this.val; }
 INT := val='[0-9]+'
         .value = number { return parseInt(this.val); }
-_ := '\s'*
 ENDLINE := _ ';|\n'*
+_ := '\s'*

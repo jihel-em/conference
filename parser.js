@@ -1,27 +1,26 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SyntaxErr = exports.parse = exports.Parser = exports.INT = exports.STRING = exports.ROOM = exports.ASTKinds = void 0;
+exports.SyntaxErr = exports.parse = exports.Parser = exports.INT = exports.STRING = exports.ASTKinds = void 0;
 var ASTKinds;
 (function (ASTKinds) {
+    ASTKinds["PROGRAM"] = "PROGRAM";
+    ASTKinds["STATEMENT_1"] = "STATEMENT_1";
+    ASTKinds["STATEMENT_2"] = "STATEMENT_2";
+    ASTKinds["ROOMS"] = "ROOMS";
     ASTKinds["ROOM"] = "ROOM";
     ASTKinds["ROOM_$0"] = "ROOM_$0";
-    ASTKinds["ROOM_$0_$0"] = "ROOM_$0_$0";
+    ASTKinds["PAPERS"] = "PAPERS";
+    ASTKinds["PAPER"] = "PAPER";
+    ASTKinds["PERSON"] = "PERSON";
+    ASTKinds["PERSON_$0"] = "PERSON_$0";
+    ASTKinds["PERSON_$1"] = "PERSON_$1";
+    ASTKinds["PERSON_$2"] = "PERSON_$2";
+    ASTKinds["LINK"] = "LINK";
     ASTKinds["STRING"] = "STRING";
     ASTKinds["INT"] = "INT";
-    ASTKinds["_"] = "_";
     ASTKinds["ENDLINE"] = "ENDLINE";
+    ASTKinds["_"] = "_";
 })(ASTKinds = exports.ASTKinds || (exports.ASTKinds = {}));
-class ROOM {
-    constructor(room) {
-        this.kind = ASTKinds.ROOM;
-        this.room = room;
-        this.test = (() => {
-            const reducer = (accumulator, currentRoom) => accumulator + currentRoom.name.value + ' ';
-            return this.room.reduce(reducer, '');
-        })();
-    }
-}
-exports.ROOM = ROOM;
 class STRING {
     constructor(val) {
         this.kind = ASTKinds.STRING;
@@ -57,22 +56,36 @@ class Parser {
     }
     clearMemos() {
     }
-    matchROOM($$dpth, $$cr) {
+    matchPROGRAM($$dpth, $$cr) {
+        return this.loop(() => this.matchSTATEMENT($$dpth + 1, $$cr), true);
+    }
+    matchSTATEMENT($$dpth, $$cr) {
+        return this.choice([
+            () => this.matchSTATEMENT_1($$dpth + 1, $$cr),
+            () => this.matchSTATEMENT_2($$dpth + 1, $$cr),
+        ]);
+    }
+    matchSTATEMENT_1($$dpth, $$cr) {
+        return this.matchROOMS($$dpth + 1, $$cr);
+    }
+    matchSTATEMENT_2($$dpth, $$cr) {
+        return this.matchPAPERS($$dpth + 1, $$cr);
+    }
+    matchROOMS($$dpth, $$cr) {
         return this.run($$dpth, () => {
-            let $scope$room;
             let $$res = null;
             if (true
                 && this.regexAccept(String.raw `(?:#)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
-                && this.regexAccept(String.raw `(?:room)`, $$dpth + 1, $$cr) !== null
+                && this.regexAccept(String.raw `(?:rooms)`, $$dpth + 1, $$cr) !== null
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null
-                && ($scope$room = this.loop(() => this.matchROOM_$0($$dpth + 1, $$cr), true)) !== null) {
-                $$res = new ROOM($scope$room);
+                && this.loop(() => this.matchROOM($$dpth + 1, $$cr), true) !== null) {
+                $$res = { kind: ASTKinds.ROOMS, };
             }
             return $$res;
         });
     }
-    matchROOM_$0($$dpth, $$cr) {
+    matchROOM($$dpth, $$cr) {
         return this.run($$dpth, () => {
             let $scope$name;
             let $scope$rhs;
@@ -82,14 +95,15 @@ class Parser {
                 && this.regexAccept(String.raw `(?:-)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
                 && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
-                && (($scope$rhs = this.matchROOM_$0_$0($$dpth + 1, $$cr)) || true)
+                && this.match_($$dpth + 1, $$cr) !== null
+                && (($scope$rhs = this.matchROOM_$0($$dpth + 1, $$cr)) || true)
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.ROOM_$0, name: $scope$name, rhs: $scope$rhs };
+                $$res = { kind: ASTKinds.ROOM, name: $scope$name, rhs: $scope$rhs };
             }
             return $$res;
         });
     }
-    matchROOM_$0_$0($$dpth, $$cr) {
+    matchROOM_$0($$dpth, $$cr) {
         return this.run($$dpth, () => {
             let $scope$cap;
             let $$res = null;
@@ -97,10 +111,107 @@ class Parser {
                 && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
                 && ($scope$cap = this.matchINT($$dpth + 1, $$cr)) !== null) {
-                $$res = { kind: ASTKinds.ROOM_$0_$0, cap: $scope$cap };
+                $$res = { kind: ASTKinds.ROOM_$0, cap: $scope$cap };
             }
             return $$res;
         });
+    }
+    matchPAPERS($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:#)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && this.regexAccept(String.raw `(?:papers)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null
+                && this.loop(() => this.matchPAPER($$dpth + 1, $$cr), true) !== null) {
+                $$res = { kind: ASTKinds.PAPERS, };
+            }
+            return $$res;
+        });
+    }
+    matchPAPER($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$paperName;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:##)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$paperName = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null
+                && this.loop(() => this.matchPERSON($$dpth + 1, $$cr), true) !== null) {
+                $$res = { kind: ASTKinds.PAPER, paperName: $scope$paperName };
+            }
+            return $$res;
+        });
+    }
+    matchPERSON($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$name;
+            let $scope$snd;
+            let $scope$trd;
+            let $scope$fth;
+            let $$res = null;
+            if (true
+                && this.match_($$dpth + 1, $$cr) !== null
+                && this.regexAccept(String.raw `(?:-)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && (($scope$snd = this.matchPERSON_$0($$dpth + 1, $$cr)) || true)
+                && (($scope$trd = this.matchPERSON_$1($$dpth + 1, $$cr)) || true)
+                && (($scope$fth = this.matchPERSON_$2($$dpth + 1, $$cr)) || true)
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON, name: $scope$name, snd: $scope$snd, trd: $scope$trd, fth: $scope$fth };
+            }
+            return $$res;
+        });
+    }
+    matchPERSON_$0($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$about;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$about = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON_$0, about: $scope$about };
+            }
+            return $$res;
+        });
+    }
+    matchPERSON_$1($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$homepage;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$homepage = this.matchLINK($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON_$1, homepage: $scope$homepage };
+            }
+            return $$res;
+        });
+    }
+    matchPERSON_$2($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$email;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$email = this.matchLINK($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON_$2, email: $scope$email };
+            }
+            return $$res;
+        });
+    }
+    matchLINK($$dpth, $$cr) {
+        return this.regexAccept(String.raw `(?:[a-zA-Z0-9.\/?!=\-\+:@]+)`, $$dpth + 1, $$cr);
     }
     matchSTRING($$dpth, $$cr) {
         return this.run($$dpth, () => {
@@ -124,9 +235,6 @@ class Parser {
             return $$res;
         });
     }
-    match_($$dpth, $$cr) {
-        return this.loop(() => this.regexAccept(String.raw `(?:\s)`, $$dpth + 1, $$cr), true);
-    }
     matchENDLINE($$dpth, $$cr) {
         return this.run($$dpth, () => {
             let $$res = null;
@@ -138,22 +246,25 @@ class Parser {
             return $$res;
         });
     }
+    match_($$dpth, $$cr) {
+        return this.loop(() => this.regexAccept(String.raw `(?:\s)`, $$dpth + 1, $$cr), true);
+    }
     test() {
         const mrk = this.mark();
-        const res = this.matchROOM(0);
+        const res = this.matchPROGRAM(0);
         const ans = res !== null;
         this.reset(mrk);
         return ans;
     }
     parse() {
         const mrk = this.mark();
-        const res = this.matchROOM(0);
+        const res = this.matchPROGRAM(0);
         if (res)
             return { ast: res, errs: [] };
         this.reset(mrk);
         const rec = new ErrorTracker();
         this.clearMemos();
-        this.matchROOM(0, rec);
+        this.matchPROGRAM(0, rec);
         const err = rec.getErr();
         return { ast: res, errs: err !== null ? [err] : [] };
     }

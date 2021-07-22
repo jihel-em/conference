@@ -1,7 +1,7 @@
-# room
+# rooms
 - Chateaubriand, 400
 - Rotonde J. Cartier
-# paper
+# papers
 
 ## From Language Engineering to Viewpoint Engineering
 
