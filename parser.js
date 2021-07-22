@@ -4,21 +4,19 @@ exports.SyntaxErr = exports.parse = exports.Parser = exports.INT = exports.STRIN
 var ASTKinds;
 (function (ASTKinds) {
     ASTKinds["PROGRAM"] = "PROGRAM";
-    ASTKinds["STATEMENT_1"] = "STATEMENT_1";
-    ASTKinds["STATEMENT_2"] = "STATEMENT_2";
     ASTKinds["ROOMS"] = "ROOMS";
     ASTKinds["ROOM"] = "ROOM";
     ASTKinds["ROOM_$0"] = "ROOM_$0";
     ASTKinds["PAPERS"] = "PAPERS";
     ASTKinds["PAPER"] = "PAPER";
     ASTKinds["PERSON"] = "PERSON";
-    ASTKinds["OTHERINFO"] = "OTHERINFO";
-    ASTKinds["OTHERINFO_$0_1"] = "OTHERINFO_$0_1";
-    ASTKinds["OTHERINFO_$0_2"] = "OTHERINFO_$0_2";
-    ASTKinds["OTHERINFO_$0_3"] = "OTHERINFO_$0_3";
-    ASTKinds["ABOUT"] = "ABOUT";
-    ASTKinds["HOMEPAGE"] = "HOMEPAGE";
+    ASTKinds["PERSON_$0"] = "PERSON_$0";
+    ASTKinds["PERSON_$1"] = "PERSON_$1";
+    ASTKinds["PERSON_$2"] = "PERSON_$2";
     ASTKinds["EMAIL"] = "EMAIL";
+    ASTKinds["ABSTRACT"] = "ABSTRACT";
+    ASTKinds["ABSTRACT_$0"] = "ABSTRACT_$0";
+    ASTKinds["VIDEO"] = "VIDEO";
     ASTKinds["LINK"] = "LINK";
     ASTKinds["STRING"] = "STRING";
     ASTKinds["INT"] = "INT";
@@ -61,30 +59,27 @@ class Parser {
     clearMemos() {
     }
     matchPROGRAM($$dpth, $$cr) {
-        return this.loop(() => this.matchSTATEMENT($$dpth + 1, $$cr), true);
-    }
-    matchSTATEMENT($$dpth, $$cr) {
-        return this.choice([
-            () => this.matchSTATEMENT_1($$dpth + 1, $$cr),
-            () => this.matchSTATEMENT_2($$dpth + 1, $$cr),
-        ]);
-    }
-    matchSTATEMENT_1($$dpth, $$cr) {
-        return this.matchROOMS($$dpth + 1, $$cr);
-    }
-    matchSTATEMENT_2($$dpth, $$cr) {
-        return this.matchPAPERS($$dpth + 1, $$cr);
+        return this.run($$dpth, () => {
+            let $$res = null;
+            if (true
+                && this.matchROOMS($$dpth + 1, $$cr) !== null
+                && this.matchPAPERS($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PROGRAM, };
+            }
+            return $$res;
+        });
     }
     matchROOMS($$dpth, $$cr) {
         return this.run($$dpth, () => {
+            let $scope$rooms;
             let $$res = null;
             if (true
                 && this.regexAccept(String.raw `(?:#)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
                 && this.regexAccept(String.raw `(?:rooms)`, $$dpth + 1, $$cr) !== null
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null
-                && this.loop(() => this.matchROOM($$dpth + 1, $$cr), true) !== null) {
-                $$res = { kind: ASTKinds.ROOMS, };
+                && ($scope$rooms = this.loop(() => this.matchROOM($$dpth + 1, $$cr), true)) !== null) {
+                $$res = { kind: ASTKinds.ROOMS, rooms: $scope$rooms };
             }
             return $$res;
         });
@@ -138,14 +133,18 @@ class Parser {
     matchPAPER($$dpth, $$cr) {
         return this.run($$dpth, () => {
             let $scope$paperName;
+            let $scope$video;
             let $$res = null;
             if (true
                 && this.regexAccept(String.raw `(?:##)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
                 && ($scope$paperName = this.matchSTRING($$dpth + 1, $$cr)) !== null
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null
-                && this.loop(() => this.matchPERSON($$dpth + 1, $$cr), true) !== null) {
-                $$res = { kind: ASTKinds.PAPER, paperName: $scope$paperName };
+                && this.loop(() => this.matchPERSON($$dpth + 1, $$cr), true) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null
+                && ((this.matchABSTRACT($$dpth + 1, $$cr)) || true)
+                && (($scope$video = this.matchVIDEO($$dpth + 1, $$cr)) || true)) {
+                $$res = { kind: ASTKinds.PAPER, paperName: $scope$paperName, video: $scope$video };
             }
             return $$res;
         });
@@ -160,53 +159,101 @@ class Parser {
                 && this.match_($$dpth + 1, $$cr) !== null
                 && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
-                && this.loop(() => this.matchOTHERINFO($$dpth + 1, $$cr), true) !== null
+                && ((this.matchPERSON_$0($$dpth + 1, $$cr)) || true)
+                && ((this.matchPERSON_$1($$dpth + 1, $$cr)) || true)
+                && ((this.matchPERSON_$2($$dpth + 1, $$cr)) || true)
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null) {
                 $$res = { kind: ASTKinds.PERSON, name: $scope$name };
             }
             return $$res;
         });
     }
-    matchOTHERINFO($$dpth, $$cr) {
+    matchPERSON_$0($$dpth, $$cr) {
         return this.run($$dpth, () => {
-            let $scope$info;
+            let $scope$about;
             let $$res = null;
             if (true
                 && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
-                && ($scope$info = this.matchOTHERINFO_$0($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$about = this.matchSTRING($$dpth + 1, $$cr)) !== null
                 && this.match_($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.OTHERINFO, info: $scope$info };
+                $$res = { kind: ASTKinds.PERSON_$0, about: $scope$about };
             }
             return $$res;
         });
     }
-    matchOTHERINFO_$0($$dpth, $$cr) {
-        return this.choice([
-            () => this.matchOTHERINFO_$0_1($$dpth + 1, $$cr),
-            () => this.matchOTHERINFO_$0_2($$dpth + 1, $$cr),
-            () => this.matchOTHERINFO_$0_3($$dpth + 1, $$cr),
-        ]);
+    matchPERSON_$1($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$homepage;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$homepage = this.matchLINK($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON_$1, homepage: $scope$homepage };
+            }
+            return $$res;
+        });
     }
-    matchOTHERINFO_$0_1($$dpth, $$cr) {
-        return this.matchABOUT($$dpth + 1, $$cr);
-    }
-    matchOTHERINFO_$0_2($$dpth, $$cr) {
-        return this.matchHOMEPAGE($$dpth + 1, $$cr);
-    }
-    matchOTHERINFO_$0_3($$dpth, $$cr) {
-        return this.matchEMAIL($$dpth + 1, $$cr);
-    }
-    matchABOUT($$dpth, $$cr) {
-        return this.matchSTRING($$dpth + 1, $$cr);
-    }
-    matchHOMEPAGE($$dpth, $$cr) {
-        return this.matchLINK($$dpth + 1, $$cr);
+    matchPERSON_$2($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$email;
+            let $$res = null;
+            if (true
+                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
+                && this.match_($$dpth + 1, $$cr) !== null
+                && ($scope$email = this.matchEMAIL($$dpth + 1, $$cr)) !== null
+                && this.match_($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.PERSON_$2, email: $scope$email };
+            }
+            return $$res;
+        });
     }
     matchEMAIL($$dpth, $$cr) {
-        return this.matchLINK($$dpth + 1, $$cr);
+        return this.regexAccept(String.raw `(?:[a-zA-Z0-9.!#$%&\'*+/=?^_\`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*)`, $$dpth + 1, $$cr);
+    }
+    matchABSTRACT($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$text;
+            let $$res = null;
+            if (true
+                && this.match_($$dpth + 1, $$cr) !== null
+                && this.regexAccept(String.raw `(?:\*abstract\*:)`, $$dpth + 1, $$cr) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null
+                && ($scope$text = this.loop(() => this.matchABSTRACT_$0($$dpth + 1, $$cr), true)) !== null) {
+                $$res = { kind: ASTKinds.ABSTRACT, text: $scope$text };
+            }
+            return $$res;
+        });
+    }
+    matchABSTRACT_$0($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $$res = null;
+            if (true
+                && this.matchSTRING($$dpth + 1, $$cr) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null) {
+                $$res = { kind: ASTKinds.ABSTRACT_$0, };
+            }
+            return $$res;
+        });
+    }
+    matchVIDEO($$dpth, $$cr) {
+        return this.run($$dpth, () => {
+            let $scope$url;
+            let $$res = null;
+            if (true
+                && this.match_($$dpth + 1, $$cr) !== null
+                && this.regexAccept(String.raw `(?:\*video\*:)`, $$dpth + 1, $$cr) !== null
+                && this.matchENDLINE($$dpth + 1, $$cr) !== null
+                && ($scope$url = this.matchLINK($$dpth + 1, $$cr)) !== null) {
+                $$res = { kind: ASTKinds.VIDEO, url: $scope$url };
+            }
+            return $$res;
+        });
     }
     matchLINK($$dpth, $$cr) {
-        return this.regexAccept(String.raw `(?:[a-zA-Z0-9.\/?!=\-\+:@]+)`, $$dpth + 1, $$cr);
+        return this.regexAccept(String.raw `(?:https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))`, $$dpth + 1, $$cr);
     }
     matchSTRING($$dpth, $$cr) {
         return this.run($$dpth, () => {

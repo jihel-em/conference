@@ -9,3 +9,8 @@
 
 - Colin Atkinson, Professor at dedededede, https://cccdccdcdcdcd
 - Machin Truc, Chercheur, https://jgqzdkb, machin@gmail.com
+
+*abstract*: 
+cccdccdcdcdcd
+
+*video*: http://youtube.md

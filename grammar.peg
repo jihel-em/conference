@@ -1,18 +1,16 @@
-PROGRAM := STATEMENT*
-STATEMENT := ROOMS | PAPERS
+PROGRAM := ROOMS PAPERS
 
-ROOMS := '#' _ 'rooms' ENDLINE ROOM*
+ROOMS := '#' _ 'rooms' ENDLINE rooms=ROOM*
 ROOM := _ '-' _ name=STRING _ rhs={',' _ cap=INT}? ENDLINE
 
 PAPERS := '#' _ 'papers' _ ENDLINE PAPER*
-PAPER := '##' _ paperName=STRING ENDLINE PERSON*
-PERSON := _ '-' _ name=STRING _ OTHERINFO* ENDLINE
-OTHERINFO := ',' info={ABOUT | HOMEPAGE | EMAIL} _
-ABOUT := STRING
-HOMEPAGE := LINK
-EMAIL := LINK
+PAPER := '##' _ paperName=STRING ENDLINE PERSON* ENDLINE ABSTRACT? video=VIDEO?
+PERSON := _ '-' _ name=STRING _ {',' _ about=STRING _}? {',' _ homepage=LINK _}? {',' _ email=EMAIL _}? ENDLINE
+EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
+ABSTRACT := _ '\*abstract\*:' ENDLINE text={STRING ENDLINE}*
+VIDEO := _ '\*video\*:' ENDLINE url=LINK
 
-LINK := '[a-zA-Z0-9.\/?!=\-\+:@]+'
+LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
         .value = string { return this.val; }
 INT := val='[0-9]+'
