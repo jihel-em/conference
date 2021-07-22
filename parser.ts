@@ -6,7 +6,11 @@
 * ROOM := _ '-' _ name=STRING _ rhs={',' _ cap=INT}? ENDLINE
 * PAPERS := '#' _ 'papers' _ ENDLINE PAPER*
 * PAPER := '##' _ paperName=STRING ENDLINE PERSON*
-* PERSON := _ '-' _ name=STRING _ snd={',' _ about=STRING _}? trd={',' _ homepage=LINK _}? fth={',' _ email=LINK _}? ENDLINE
+* PERSON := _ '-' _ name=STRING _ OTHERINFO* ENDLINE
+* OTHERINFO := ',' info={ABOUT | HOMEPAGE | EMAIL} _
+* ABOUT := STRING
+* HOMEPAGE := LINK
+* EMAIL := LINK
 * LINK := '[a-zA-Z0-9.\/?!=\-\+:@]+'
 * STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
 *         .value = string { return this.val; }
@@ -30,9 +34,13 @@ export enum ASTKinds {
     PAPERS = "PAPERS",
     PAPER = "PAPER",
     PERSON = "PERSON",
-    PERSON_$0 = "PERSON_$0",
-    PERSON_$1 = "PERSON_$1",
-    PERSON_$2 = "PERSON_$2",
+    OTHERINFO = "OTHERINFO",
+    OTHERINFO_$0_1 = "OTHERINFO_$0_1",
+    OTHERINFO_$0_2 = "OTHERINFO_$0_2",
+    OTHERINFO_$0_3 = "OTHERINFO_$0_3",
+    ABOUT = "ABOUT",
+    HOMEPAGE = "HOMEPAGE",
+    EMAIL = "EMAIL",
     LINK = "LINK",
     STRING = "STRING",
     INT = "INT",
@@ -65,22 +73,18 @@ export interface PAPER {
 export interface PERSON {
     kind: ASTKinds.PERSON;
     name: STRING;
-    snd: Nullable<PERSON_$0>;
-    trd: Nullable<PERSON_$1>;
-    fth: Nullable<PERSON_$2>;
 }
-export interface PERSON_$0 {
-    kind: ASTKinds.PERSON_$0;
-    about: STRING;
+export interface OTHERINFO {
+    kind: ASTKinds.OTHERINFO;
+    info: OTHERINFO_$0;
 }
-export interface PERSON_$1 {
-    kind: ASTKinds.PERSON_$1;
-    homepage: LINK;
-}
-export interface PERSON_$2 {
-    kind: ASTKinds.PERSON_$2;
-    email: LINK;
-}
+export type OTHERINFO_$0 = OTHERINFO_$0_1 | OTHERINFO_$0_2 | OTHERINFO_$0_3;
+export type OTHERINFO_$0_1 = ABOUT;
+export type OTHERINFO_$0_2 = HOMEPAGE;
+export type OTHERINFO_$0_3 = EMAIL;
+export type ABOUT = STRING;
+export type HOMEPAGE = LINK;
+export type EMAIL = LINK;
 export type LINK = string;
 export class STRING {
     public kind: ASTKinds.STRING = ASTKinds.STRING;
@@ -229,9 +233,6 @@ export class Parser {
         return this.run<PERSON>($$dpth,
             () => {
                 let $scope$name: Nullable<STRING>;
-                let $scope$snd: Nullable<Nullable<PERSON_$0>>;
-                let $scope$trd: Nullable<Nullable<PERSON_$1>>;
-                let $scope$fth: Nullable<Nullable<PERSON_$2>>;
                 let $$res: Nullable<PERSON> = null;
                 if (true
                     && this.match_($$dpth + 1, $$cr) !== null
@@ -239,63 +240,53 @@ export class Parser {
                     && this.match_($$dpth + 1, $$cr) !== null
                     && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
                     && this.match_($$dpth + 1, $$cr) !== null
-                    && (($scope$snd = this.matchPERSON_$0($$dpth + 1, $$cr)) || true)
-                    && (($scope$trd = this.matchPERSON_$1($$dpth + 1, $$cr)) || true)
-                    && (($scope$fth = this.matchPERSON_$2($$dpth + 1, $$cr)) || true)
+                    && this.loop<OTHERINFO>(() => this.matchOTHERINFO($$dpth + 1, $$cr), true) !== null
                     && this.matchENDLINE($$dpth + 1, $$cr) !== null
                 ) {
-                    $$res = {kind: ASTKinds.PERSON, name: $scope$name, snd: $scope$snd, trd: $scope$trd, fth: $scope$fth};
+                    $$res = {kind: ASTKinds.PERSON, name: $scope$name};
                 }
                 return $$res;
             });
     }
-    public matchPERSON_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<PERSON_$0> {
-        return this.run<PERSON_$0>($$dpth,
+    public matchOTHERINFO($$dpth: number, $$cr?: ErrorTracker): Nullable<OTHERINFO> {
+        return this.run<OTHERINFO>($$dpth,
             () => {
-                let $scope$about: Nullable<STRING>;
-                let $$res: Nullable<PERSON_$0> = null;
+                let $scope$info: Nullable<OTHERINFO_$0>;
+                let $$res: Nullable<OTHERINFO> = null;
                 if (true
                     && this.regexAccept(String.raw`(?:,)`, $$dpth + 1, $$cr) !== null
-                    && this.match_($$dpth + 1, $$cr) !== null
-                    && ($scope$about = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                    && ($scope$info = this.matchOTHERINFO_$0($$dpth + 1, $$cr)) !== null
                     && this.match_($$dpth + 1, $$cr) !== null
                 ) {
-                    $$res = {kind: ASTKinds.PERSON_$0, about: $scope$about};
+                    $$res = {kind: ASTKinds.OTHERINFO, info: $scope$info};
                 }
                 return $$res;
             });
     }
-    public matchPERSON_$1($$dpth: number, $$cr?: ErrorTracker): Nullable<PERSON_$1> {
-        return this.run<PERSON_$1>($$dpth,
-            () => {
-                let $scope$homepage: Nullable<LINK>;
-                let $$res: Nullable<PERSON_$1> = null;
-                if (true
-                    && this.regexAccept(String.raw`(?:,)`, $$dpth + 1, $$cr) !== null
-                    && this.match_($$dpth + 1, $$cr) !== null
-                    && ($scope$homepage = this.matchLINK($$dpth + 1, $$cr)) !== null
-                    && this.match_($$dpth + 1, $$cr) !== null
-                ) {
-                    $$res = {kind: ASTKinds.PERSON_$1, homepage: $scope$homepage};
-                }
-                return $$res;
-            });
+    public matchOTHERINFO_$0($$dpth: number, $$cr?: ErrorTracker): Nullable<OTHERINFO_$0> {
+        return this.choice<OTHERINFO_$0>([
+            () => this.matchOTHERINFO_$0_1($$dpth + 1, $$cr),
+            () => this.matchOTHERINFO_$0_2($$dpth + 1, $$cr),
+            () => this.matchOTHERINFO_$0_3($$dpth + 1, $$cr),
+        ]);
     }
-    public matchPERSON_$2($$dpth: number, $$cr?: ErrorTracker): Nullable<PERSON_$2> {
-        return this.run<PERSON_$2>($$dpth,
-            () => {
-                let $scope$email: Nullable<LINK>;
-                let $$res: Nullable<PERSON_$2> = null;
-                if (true
-                    && this.regexAccept(String.raw`(?:,)`, $$dpth + 1, $$cr) !== null
-                    && this.match_($$dpth + 1, $$cr) !== null
-                    && ($scope$email = this.matchLINK($$dpth + 1, $$cr)) !== null
-                    && this.match_($$dpth + 1, $$cr) !== null
-                ) {
-                    $$res = {kind: ASTKinds.PERSON_$2, email: $scope$email};
-                }
-                return $$res;
-            });
+    public matchOTHERINFO_$0_1($$dpth: number, $$cr?: ErrorTracker): Nullable<OTHERINFO_$0_1> {
+        return this.matchABOUT($$dpth + 1, $$cr);
+    }
+    public matchOTHERINFO_$0_2($$dpth: number, $$cr?: ErrorTracker): Nullable<OTHERINFO_$0_2> {
+        return this.matchHOMEPAGE($$dpth + 1, $$cr);
+    }
+    public matchOTHERINFO_$0_3($$dpth: number, $$cr?: ErrorTracker): Nullable<OTHERINFO_$0_3> {
+        return this.matchEMAIL($$dpth + 1, $$cr);
+    }
+    public matchABOUT($$dpth: number, $$cr?: ErrorTracker): Nullable<ABOUT> {
+        return this.matchSTRING($$dpth + 1, $$cr);
+    }
+    public matchHOMEPAGE($$dpth: number, $$cr?: ErrorTracker): Nullable<HOMEPAGE> {
+        return this.matchLINK($$dpth + 1, $$cr);
+    }
+    public matchEMAIL($$dpth: number, $$cr?: ErrorTracker): Nullable<EMAIL> {
+        return this.matchLINK($$dpth + 1, $$cr);
     }
     public matchLINK($$dpth: number, $$cr?: ErrorTracker): Nullable<LINK> {
         return this.regexAccept(String.raw`(?:[a-zA-Z0-9.\/?!=\-\+:@]+)`, $$dpth + 1, $$cr);

@@ -8,4 +8,4 @@
 ## From Language Engineering to Viewpoint Engineering
 
 - Colin Atkinson, Professor at dedededede, https://cccdccdcdcdcd
-- Machin Truc, Chercheur, https://jgqzdkb
+- Machin Truc, Chercheur, https://jgqzdkb, machin@gmail.com

@@ -12,9 +12,13 @@ var ASTKinds;
     ASTKinds["PAPERS"] = "PAPERS";
     ASTKinds["PAPER"] = "PAPER";
     ASTKinds["PERSON"] = "PERSON";
-    ASTKinds["PERSON_$0"] = "PERSON_$0";
-    ASTKinds["PERSON_$1"] = "PERSON_$1";
-    ASTKinds["PERSON_$2"] = "PERSON_$2";
+    ASTKinds["OTHERINFO"] = "OTHERINFO";
+    ASTKinds["OTHERINFO_$0_1"] = "OTHERINFO_$0_1";
+    ASTKinds["OTHERINFO_$0_2"] = "OTHERINFO_$0_2";
+    ASTKinds["OTHERINFO_$0_3"] = "OTHERINFO_$0_3";
+    ASTKinds["ABOUT"] = "ABOUT";
+    ASTKinds["HOMEPAGE"] = "HOMEPAGE";
+    ASTKinds["EMAIL"] = "EMAIL";
     ASTKinds["LINK"] = "LINK";
     ASTKinds["STRING"] = "STRING";
     ASTKinds["INT"] = "INT";
@@ -149,9 +153,6 @@ class Parser {
     matchPERSON($$dpth, $$cr) {
         return this.run($$dpth, () => {
             let $scope$name;
-            let $scope$snd;
-            let $scope$trd;
-            let $scope$fth;
             let $$res = null;
             if (true
                 && this.match_($$dpth + 1, $$cr) !== null
@@ -159,56 +160,50 @@ class Parser {
                 && this.match_($$dpth + 1, $$cr) !== null
                 && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
-                && (($scope$snd = this.matchPERSON_$0($$dpth + 1, $$cr)) || true)
-                && (($scope$trd = this.matchPERSON_$1($$dpth + 1, $$cr)) || true)
-                && (($scope$fth = this.matchPERSON_$2($$dpth + 1, $$cr)) || true)
+                && this.loop(() => this.matchOTHERINFO($$dpth + 1, $$cr), true) !== null
                 && this.matchENDLINE($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.PERSON, name: $scope$name, snd: $scope$snd, trd: $scope$trd, fth: $scope$fth };
+                $$res = { kind: ASTKinds.PERSON, name: $scope$name };
             }
             return $$res;
         });
     }
-    matchPERSON_$0($$dpth, $$cr) {
+    matchOTHERINFO($$dpth, $$cr) {
         return this.run($$dpth, () => {
-            let $scope$about;
+            let $scope$info;
             let $$res = null;
             if (true
                 && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
-                && this.match_($$dpth + 1, $$cr) !== null
-                && ($scope$about = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                && ($scope$info = this.matchOTHERINFO_$0($$dpth + 1, $$cr)) !== null
                 && this.match_($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.PERSON_$0, about: $scope$about };
+                $$res = { kind: ASTKinds.OTHERINFO, info: $scope$info };
             }
             return $$res;
         });
     }
-    matchPERSON_$1($$dpth, $$cr) {
-        return this.run($$dpth, () => {
-            let $scope$homepage;
-            let $$res = null;
-            if (true
-                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
-                && this.match_($$dpth + 1, $$cr) !== null
-                && ($scope$homepage = this.matchLINK($$dpth + 1, $$cr)) !== null
-                && this.match_($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.PERSON_$1, homepage: $scope$homepage };
-            }
-            return $$res;
-        });
+    matchOTHERINFO_$0($$dpth, $$cr) {
+        return this.choice([
+            () => this.matchOTHERINFO_$0_1($$dpth + 1, $$cr),
+            () => this.matchOTHERINFO_$0_2($$dpth + 1, $$cr),
+            () => this.matchOTHERINFO_$0_3($$dpth + 1, $$cr),
+        ]);
     }
-    matchPERSON_$2($$dpth, $$cr) {
-        return this.run($$dpth, () => {
-            let $scope$email;
-            let $$res = null;
-            if (true
-                && this.regexAccept(String.raw `(?:,)`, $$dpth + 1, $$cr) !== null
-                && this.match_($$dpth + 1, $$cr) !== null
-                && ($scope$email = this.matchLINK($$dpth + 1, $$cr)) !== null
-                && this.match_($$dpth + 1, $$cr) !== null) {
-                $$res = { kind: ASTKinds.PERSON_$2, email: $scope$email };
-            }
-            return $$res;
-        });
+    matchOTHERINFO_$0_1($$dpth, $$cr) {
+        return this.matchABOUT($$dpth + 1, $$cr);
+    }
+    matchOTHERINFO_$0_2($$dpth, $$cr) {
+        return this.matchHOMEPAGE($$dpth + 1, $$cr);
+    }
+    matchOTHERINFO_$0_3($$dpth, $$cr) {
+        return this.matchEMAIL($$dpth + 1, $$cr);
+    }
+    matchABOUT($$dpth, $$cr) {
+        return this.matchSTRING($$dpth + 1, $$cr);
+    }
+    matchHOMEPAGE($$dpth, $$cr) {
+        return this.matchLINK($$dpth + 1, $$cr);
+    }
+    matchEMAIL($$dpth, $$cr) {
+        return this.matchLINK($$dpth + 1, $$cr);
     }
     matchLINK($$dpth, $$cr) {
         return this.regexAccept(String.raw `(?:[a-zA-Z0-9.\/?!=\-\+:@]+)`, $$dpth + 1, $$cr);

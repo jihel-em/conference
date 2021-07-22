@@ -6,7 +6,11 @@ ROOM := _ '-' _ name=STRING _ rhs={',' _ cap=INT}? ENDLINE
 
 PAPERS := '#' _ 'papers' _ ENDLINE PAPER*
 PAPER := '##' _ paperName=STRING ENDLINE PERSON*
-PERSON := _ '-' _ name=STRING _ snd={',' _ about=STRING _}? trd={',' _ homepage=LINK _}? fth={',' _ email=LINK _}? ENDLINE
+PERSON := _ '-' _ name=STRING _ OTHERINFO* ENDLINE
+OTHERINFO := ',' info={ABOUT | HOMEPAGE | EMAIL} _
+ABOUT := STRING
+HOMEPAGE := LINK
+EMAIL := LINK
 
 LINK := '[a-zA-Z0-9.\/?!=\-\+:@]+'
 STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
