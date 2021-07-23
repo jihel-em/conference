@@ -1,19 +1,27 @@
-PROGRAM := ROOMS PAPERS
+PROGRAM := rooms=ROOMS papers=PAPERS
 
-ROOMS := '#' _ 'rooms' ENDLINE rooms=ROOM*
-ROOM := _ '-' _ name=STRING _ rhs={',' _ cap=INT}? ENDLINE
+ROOMS := '#' _ 'rooms' ENDLINE* rooms=ROOM*
+ROOM := _ '-' _ name=STRING _ capacite={',' _ value=INT}? ENDLINE*
 
-PAPERS := '#' _ 'papers' _ ENDLINE PAPER*
-PAPER := '##' _ paperName=STRING ENDLINE PERSON* ENDLINE ABSTRACT? video=VIDEO?
-PERSON := _ '-' _ name=STRING _ {',' _ about=STRING _}? {',' _ homepage=LINK _}? {',' _ email=EMAIL _}? ENDLINE
+PAPERS := '#' _ 'papers' _ ENDLINE* papers=PAPER*
+PAPER := '##' _ paperName=STRING ENDLINE* authors=PERSON* abstract=ABSTRACT? video=VIDEO?
+PERSON := _ '-' _ name=STRING about={_ ',' _ value=STRING _}? homepage={_ ',' _ value=LINK _}? email={_ ',' _ value=EMAIL _}? ENDLINE*
+
+ABSTRACT := _ '\*abstract\*:' ENDLINE text=MULTISTRING ENDLINE*
+VIDEO := _ '\*video\*:' _ url=LINK ENDLINE*
+
+EVENTS := '#' _ 'events' _ ENDLINE* events=EVENT*
+EVENT := SimpleEvent | OrganizedEvent | TalkSession
+SimpleEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
+OrganizedEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
+TalkSession := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
+
+// terminals
 EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
-ABSTRACT := _ '\*abstract\*:' ENDLINE text={STRING ENDLINE}*
-VIDEO := _ '\*video\*:' ENDLINE url=LINK
-
 LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
-STRING := val='[a-zA-Z0-9][a-zA-Z0-9.\s]*'
-        .value = string { return this.val; }
+STRING := '[a-zA-Z0-9][a-zA-Z0-9. ]*'
+MULTISTRING := '([a-zA-Z0-9][a-zA-Z0-9. \t]+\n)*'
 INT := val='[0-9]+'
         .value = number { return parseInt(this.val); }
-ENDLINE := _ ';|\n'*
-_ := '\s'*
+ENDLINE := _ ';|\n'|$
+_ := '[ \t\r\f]*'
