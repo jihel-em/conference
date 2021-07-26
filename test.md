@@ -22,17 +22,20 @@ cccdccdcdcdcd
 ## Coffee break
 
 ## (c) cdccdcddc
-- organizer: ccdcdc
+- Machin Truc, Chercheur, https://jgqzdkb.fr, machin@gmail.com
 *abstract*:
 This is an organized event.
 
 ## (w) cdccdcddc
-- organizer :oif
+- Machin Truc, Chercheur, https://jgqzdkb.fr, machin@gmail.com
 
 ## (coffee) cdccdcddc
-- organizer:qzd
+- Machin Truc, Chercheur, https://jgqzdkb.fr, machin@gmail.com
 
 ## (keynote) cdccdcddc
 
 ## [talksession] qzfefgsg
-- papers : From Language Engineering to Viewpoint Engineering
+- Machin Truc, Chercheur, https://jgqzdkb.fr, machin@gmail.com
+
+### papers
+- From Language Engineering to Viewpoint Engineering

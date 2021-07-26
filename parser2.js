@@ -355,7 +355,8 @@ class Parser {
                 && this.match_($$dpth + 1, $$cr) !== null
                 && this.regexAccept(String.raw `(?:-)`, $$dpth + 1, $$cr) !== null
                 && this.match_($$dpth + 1, $$cr) !== null
-                && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null) {
+                && ($scope$name = this.matchSTRING($$dpth + 1, $$cr)) !== null
+                && this.loop(() => this.matchENDLINE($$dpth + 1, $$cr), true) !== null) {
                 $$res = { kind: ASTKinds.TalkSession_$0, name: $scope$name };
             }
             return $$res;
@@ -371,7 +372,7 @@ class Parser {
         return this.regexAccept(String.raw `(?:[a-zA-Z0-9][a-zA-Z0-9. ]*)`, $$dpth + 1, $$cr);
     }
     matchMULTISTRING($$dpth, $$cr) {
-        return this.regexAccept(String.raw `(?:([^\n]+\n)*)`, $$dpth + 1, $$cr);
+        return this.regexAccept(String.raw `(?:([^\n\r]+\r?\n)*)`, $$dpth + 1, $$cr);
     }
     matchINT($$dpth, $$cr) {
         return this.regexAccept(String.raw `(?:[0-9]+)`, $$dpth + 1, $$cr);

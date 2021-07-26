@@ -16,7 +16,7 @@
 * EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
 * LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 * STRING := '[a-zA-Z0-9][a-zA-Z0-9. ]*'
-* MULTISTRING := '([^\n]+\n)*'
+* MULTISTRING := '([^\n\r]+\r?\n)*'
 * INT := '[0-9]+'
 * ENDLINE := _ ';|\n'
 * _ := '[ \t\r\f]*'
@@ -530,7 +530,7 @@ export class Parser {
         return this.regexAccept(String.raw`(?:[a-zA-Z0-9][a-zA-Z0-9. ]*)`, $$dpth + 1, $$cr);
     }
     public matchMULTISTRING($$dpth: number, $$cr?: ErrorTracker): Nullable<MULTISTRING> {
-        return this.regexAccept(String.raw`(?:([^\n]+\n)*)`, $$dpth + 1, $$cr);
+        return this.regexAccept(String.raw`(?:([^\n\r]+\r?\n)*)`, $$dpth + 1, $$cr);
     }
     public matchINT($$dpth: number, $$cr?: ErrorTracker): Nullable<INT> {
         return this.regexAccept(String.raw`(?:[0-9]+)`, $$dpth + 1, $$cr);

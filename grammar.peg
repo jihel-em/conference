@@ -14,12 +14,12 @@ EVENTS := '#' _ 'events' _ ENDLINE* events=EVENT*
 EVENT := SimpleEvent | OrganizedEvent | TalkSession
 SimpleEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT? ENDLINE*
 OrganizedEvent := '##' _ '\(' _ eventType=STRING _ '\)' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE*
-TalkSession := '##' _ '\[' _ eventType=STRING _ '\]' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE* '###' _ 'papers' _ ENDLINE* papers={ _ '-' _ name=STRING}*
+TalkSession := '##' _ '\[' _ eventType=STRING _ '\]' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE* '###' _ 'papers' _ ENDLINE* papers={ _ '-' _ name=STRING ENDLINE*}*
 
 EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
 LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 STRING := '[a-zA-Z0-9][a-zA-Z0-9. ]*'
-MULTISTRING := '([^\n]+\n)*'
+MULTISTRING := '([^\n\r]+\r?\n)*'
 INT := '[0-9]+'
 ENDLINE := _ ';|\n'
 _ := '[ \t\r\f]*'
