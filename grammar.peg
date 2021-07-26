@@ -16,6 +16,12 @@ SimpleEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT? ENDLINE*
 OrganizedEvent := '##' _ '\(' _ eventType=STRING _ '\)' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE*
 TalkSession := '##' _ '\[' _ eventType=STRING _ '\]' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE* '###' _ 'papers' _ ENDLINE* papers={ _ '-' _ name=STRING ENDLINE*}*
 
+Program := '#' _ '[Pp]rogram' _ ENDLINE* Day*
+Day := _ '##' _ Date _ ENDLINE* eventinfo=EventInfo*
+DATE := '(19|20)[0-9][0-9]-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])'
+EventInfo := _ '-' _ timeSlot={start=Hour _ '-' _ end=Hour} _ 'in' _ roomName=STRING _ ':' _ eventName=STRING _ ENDLINE*
+HOUR := '(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9])'
+
 EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
 LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 STRING := '[a-zA-Z0-9][a-zA-Z0-9. ]*'
