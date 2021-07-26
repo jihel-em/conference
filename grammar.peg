@@ -1,4 +1,4 @@
-PROGRAM := rooms=ROOMS papers=PAPERS
+ROOT := rooms=ROOMS papers=PAPERS events=EVENTS
 
 ROOMS := '#' _ 'rooms' ENDLINE* rooms=ROOM*
 ROOM := _ '-' _ name=STRING _ capacite={',' _ value=INT}? ENDLINE*
@@ -12,16 +12,15 @@ VIDEO := _ '\*video\*:' _ url=LINK ENDLINE*
 
 EVENTS := '#' _ 'events' _ ENDLINE* events=EVENT*
 EVENT := SimpleEvent | OrganizedEvent | TalkSession
-SimpleEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
-OrganizedEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
-TalkSession := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT?
+SimpleEvent := '##' _ eventName=STRING ENDLINE* abstract=ABSTRACT? ENDLINE*
+OrganizedEvent := '##' _ '\(' _ eventType=STRING _ '\)' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE*
+TalkSession := '##' _ '\[' _ eventType=STRING _ '\]' _ eventName=STRING ENDLINE* organizers=PERSON* abstract=ABSTRACT? ENDLINE* '###' _ 'papers' _ ENDLINE* papers={ _ '-' _ name=STRING}*
 
 // terminals
 EMAIL := '[a-zA-Z0-9.!#$%&\'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*'
 LINK := 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)'
 STRING := '[a-zA-Z0-9][a-zA-Z0-9. ]*'
-MULTISTRING := '([a-zA-Z0-9][a-zA-Z0-9. \t]+\n)*'
-INT := val='[0-9]+'
-        .value = number { return parseInt(this.val); }
-ENDLINE := _ ';|\n'|$
+MULTISTRING := '([^\n]+\n)*'
+INT := '[0-9]+'
+ENDLINE := _ ';|\n'
 _ := '[ \t\r\f]*'
