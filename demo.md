@@ -13,7 +13,7 @@
 *abstract*: 
 cccdccdcdcdcd
 
-*youtubevideo*: http://youtube.md
+*video*: http://youtube.md
 
 ## From Language Engineering to Viewpoint Engineering
 
@@ -25,7 +25,7 @@ cccdccdcdcdcd
 *abstract*: 
 cccdccdcdcdcd
 
-*youtubevideo*: http://youtube.md
+*video*: http://youtube.md
 
 
 ## From Language Engineering to Viewpoint Engineering
@@ -38,7 +38,7 @@ cccdccdcdcdcd
 *abstract*: 
 cccdccdcdcdcd
 
-*youtubevideo*: http://youtube.md
+*video*: http://youtube.md
 
 
 # events
